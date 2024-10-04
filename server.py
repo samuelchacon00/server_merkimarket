@@ -9,10 +9,10 @@ print(f"trabajando en el puerto {port}")
 
 async def handle_client(websocket):
     print("Cliente conectado")
-    await websocket.send("¡Bienvenido al servidor WebSocket!")
     async for message in websocket:
         num1=int(message.split()[0])
         num2=int(message.split()[1])
+        await websocket.send(f"{num1+num2}")
         print(f"Mensaje recibido del cliente: {num1+num2}")
 
 # Iniciar el servidor WebSocket
