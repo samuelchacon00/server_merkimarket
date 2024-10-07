@@ -1,10 +1,9 @@
-import asyncio
-import websockets
-import os
-import time
+import asyncio,websockets,os,time,logging
 
 port = int(os.environ.get("PORT", 8765))
 print(f"Trabajando en el puerto {port}")
+
+logging.basicConfig(level=logging.INFO)  
 
 # Diccionario para almacenar conexiones activas
 connected_clients = {}
@@ -38,6 +37,7 @@ async def handle_client(websocket, path):
                     #await clientes["motorola"]["websocket"].send("conecto!")
                     await websocket.send("laptop conectado")
                     time.sleep(4)
+                    logging.info("por aqui paso")
                     await websocket.send("oyeeee")
                 else:
                     if clientes["motorola"]:
@@ -50,6 +50,7 @@ async def handle_client(websocket, path):
 
     except websockets.ConnectionClosed:
         print(f"Cliente {client_id} desconectado")
+        logging.info(f"Cliente {client_id} desconectado")
         if clientes["motorola"] and clientes["motorola"]["client_id"] == client_id:
             await clientes["motorola"]["websocket"].close()
             print(f"Motorola desconectado")
