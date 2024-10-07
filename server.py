@@ -1,6 +1,7 @@
 import asyncio
 import websockets
 import os
+time
 
 port = int(os.environ.get("PORT", 8765))
 print(f"Trabajando en el puerto {port}")
@@ -34,7 +35,10 @@ async def handle_client(websocket, path):
                 if not clientes["laptop"]:
                     clientes["laptop"] = {"websocket": websocket, "client_id": client_id}
                     print(f"Laptop conectado: {client_id}")
+                    #await clientes["motorola"]["websocket"].send("conecto!")
                     await websocket.send("laptop conectado")
+                    time.sleep(4)
+                    await websocket.send("oyeeee")
                 else:
                     if clientes["motorola"]:
                         # Enviar mensaje al motorola
