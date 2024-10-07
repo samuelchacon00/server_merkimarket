@@ -18,7 +18,19 @@ async def handle_client(websocket, path):
 
     try:
         async for message in websocket:
-            if message.startswith("motorola"):
+            if message.startswith("laptop"):
+                if not clientes["laptop"]:
+                    clientes["laptop"] = {"websocket": websocket, "client_id": client_id}
+                    print(f"Laptop conectado: {client_id}")
+                    #await clientes["motorola"]["websocket"].send("conecto!")
+                    await websocket.send("laptop conectado")
+                else:
+                    if clientes["motorola"]:
+                        # Enviar mensaje al motorola
+                        await clientes["motorola"]["websocket"].send(message.replace("laptop/",""))
+                    else:
+                        await websocket.send("Motorola no conectado!")
+            elif message.startswith("motorola"):
                 if not clientes["motorola"]:
                     clientes["motorola"] = {"websocket": websocket, "client_id": client_id}
                     print(f"Motorola conectado: {client_id}")
@@ -29,22 +41,6 @@ async def handle_client(websocket, path):
                         await clientes["laptop"]["websocket"].send(message.replace("motorola/",""))
                     else:
                         await websocket.send("Laptop no conectado!")
-
-            elif message.startswith("laptop"):
-                if not clientes["laptop"]:
-                    clientes["laptop"] = {"websocket": websocket, "client_id": client_id}
-                    print(f"Laptop conectado: {client_id}")
-                    #await clientes["motorola"]["websocket"].send("conecto!")
-                    await websocket.send("laptop conectado")
-                    time.sleep(4)
-                    logging.info("por aqui paso")
-                    await websocket.send("oyeeee")
-                else:
-                    if clientes["motorola"]:
-                        # Enviar mensaje al motorola
-                        await clientes["motorola"]["websocket"].send(message.replace("laptop/",""))
-                    else:
-                        await websocket.send("Motorola no conectado!")
             else:
                 print(f"Mensaje desconocido de {client_id}: {message}")
 
