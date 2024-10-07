@@ -22,11 +22,11 @@ async def handle_client(websocket, path):
                 if not clientes["motorola"]:
                     clientes["motorola"] = {"websocket": websocket, "client_id": client_id}
                     print(f"Motorola conectado: {client_id}")
-                    websocket.send("Motorola conectado")
+                    await websocket.send("Motorola conectado")
                 else:
                     if clientes["laptop"]:
                         # Enviar mensaje al laptop
-                        await clientes["laptop"]["websocket"].send(message.replace("motorola/", "", 1))
+                        await clientes["laptop"]["websocket"].send(message.replace("motorola/",""))
                     else:
                         await websocket.send("Laptop no conectado!")
 
@@ -34,10 +34,11 @@ async def handle_client(websocket, path):
                 if not clientes["laptop"]:
                     clientes["laptop"] = {"websocket": websocket, "client_id": client_id}
                     print(f"Laptop conectado: {client_id}")
+                    await websocket.send("laptop conectado")
                 else:
                     if clientes["motorola"]:
                         # Enviar mensaje al motorola
-                        await clientes["motorola"]["websocket"].send(message.replace("laptop/", "", 1))
+                        await clientes["motorola"]["websocket"].send(message.replace("laptop/",""))
                     else:
                         await websocket.send("Motorola no conectado!")
             else:
