@@ -46,9 +46,11 @@ async def handle_client(websocket, path):
     except websockets.ConnectionClosed:
         print(f"Cliente {client_id} desconectado")
         if clientes["motorola"] and clientes["motorola"]["client_id"] == client_id:
+            await clientes["motorola"]["websocket"].close()
             print(f"Motorola desconectado")
             clientes["motorola"] = None
         elif clientes["laptop"] and clientes["laptop"]["client_id"] == client_id:
+            await clientes["laptop"]["websocket"].close()
             print(f"Laptop desconectado")
             clientes["laptop"] = None
     finally:
