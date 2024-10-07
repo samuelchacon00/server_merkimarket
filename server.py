@@ -22,6 +22,7 @@ async def handle_client(websocket, path):
                 if not clientes["motorola"]:
                     clientes["motorola"] = {"websocket": websocket, "client_id": client_id}
                     print(f"Motorola conectado: {client_id}")
+                    websocket.send("Motorola conectado")
                 else:
                     if clientes["laptop"]:
                         # Enviar mensaje al laptop
