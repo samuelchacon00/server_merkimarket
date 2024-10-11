@@ -17,19 +17,23 @@ async def handle_client(websocket, path):
     print(f"Cliente conectado: {client_id}")
 
     try:
-        async for message in websocket:
+        # Mantén la conexión abierta mientras el cliente esté conectado
+        while True:
+            # Esperar un mensaje del cliente
+            message = await websocket.recv()
+
             if message.startswith("laptop"):
                 if not clientes["laptop"]:
                     clientes["laptop"] = {"websocket": websocket, "client_id": client_id}
                     print(f"Laptop conectado: {client_id}")
-                    #await clientes["motorola"]["websocket"].send("conecto!")
                     await websocket.send("laptop conectado")
                 else:
                     if clientes["motorola"]:
                         # Enviar mensaje al motorola
-                        await clientes["motorola"]["websocket"].send(message.replace("laptop/",""))
+                        await clientes["motorola"]["websocket"].send(message.replace("laptop/", ""))
                     else:
                         await websocket.send("Motorola no conectado!")
+                        
             elif message.startswith("motorola"):
                 if not clientes["motorola"]:
                     clientes["motorola"] = {"websocket": websocket, "client_id": client_id}
@@ -38,7 +42,7 @@ async def handle_client(websocket, path):
                 else:
                     if clientes["laptop"]:
                         # Enviar mensaje al laptop
-                        await clientes["laptop"]["websocket"].send(message.replace("motorola/",""))
+                        await clientes["laptop"]["websocket"].send(message.replace("motorola/", ""))
                     else:
                         await websocket.send("Laptop no conectado!")
             else:
@@ -48,11 +52,9 @@ async def handle_client(websocket, path):
         print(f"Cliente {client_id} desconectado")
         logging.info(f"Cliente {client_id} desconectado")
         if clientes["motorola"] and clientes["motorola"]["client_id"] == client_id:
-            await clientes["motorola"]["websocket"].close()
             print(f"Motorola desconectado")
             clientes["motorola"] = None
         elif clientes["laptop"] and clientes["laptop"]["client_id"] == client_id:
-            await clientes["laptop"]["websocket"].close()
             print(f"Laptop desconectado")
             clientes["laptop"] = None
     finally:
